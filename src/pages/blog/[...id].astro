@@ -1,0 +1,86 @@
+---
+import { render } from 'astro:content';
+import ArticleArt from '../../components/ArticleArt.astro';
+import Chip from '../../components/Chip.astro';
+import CornerCard from '../../components/CornerCard.astro';
+import Icon from '../../components/Icon.astro';
+import Site from '../../layouts/Site.astro';
+import { site } from '../../site.config';
+import { withBase } from '../../utils/paths';
+import { formatDate, getPosts, readingMinutes, tagHref, wordCount, type Post } from '../../utils/posts';
+import '../../styles/reading.css';
+
+export async function getStaticPaths() {
+  return (await getPosts()).map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { Content, headings } = await render(post);
+const { title, description, pubDate, updatedDate, tags } = post.data;
+const sections = headings.filter(({ depth }) => depth === 2);
+const words = new Intl.NumberFormat(site.language).format(wordCount(post.body));
+---
+
+<Site {title} {description} type="article">
+  <article class="article">
+    <nav class="trail" aria-label="Location">
+      <a class="back-link" href={withBase('blog/')}><Icon name="left" size={14} /> All articles</a>
+    </nav>
+    <header class="article-heading">
+      <CornerCard mask>
+        <ArticleArt {title} />
+        <span slot="corner" class="article-mark" aria-hidden="true">{site.mark}</span>
+      </CornerCard>
+      <p class="article-lead">{description}</p>
+      <ul class="article-meta" aria-label="Article details" role="list">
+        {tags[0] && <li><Chip>{tags[0]}</Chip></li>}
+        <li><Icon name="calendar" /><time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time></li>
+        <li><Icon name="words" /> {words} words</li>
+        <li><Icon name="clock" /> {readingMinutes(post.body)} min read</li>
+        {updatedDate && <li>Updated <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time></li>}
+      </ul>
+    </header>
+
+    <hr class="article-divider" />
+
+    {sections.length > 0 && (
+      <aside class="article-index">
+        <details>
+          <summary><Icon name="blog" /> In this article <span class="toc-chevron"><Icon name="chevron" size={14} /></span></summary>
+          <nav aria-label="Article contents">
+            <a href="#content">Top</a>
+            {sections.map(({ slug, text }) => <a href={`#${slug}`}>{text}</a>)}
+          </nav>
+        </details>
+      </aside>
+    )}
+
+    <div class="prose"><Content /></div>
+    <footer class="article-footer">
+      {tags.length > 0 && <ul class="article-tags" aria-label="Tags" role="list">{tags.map((tag) => <li><a href={tagHref(tag)}>#{tag}</a></li>)}</ul>}
+      <a href={withBase('blog/')}>More articles <Icon name="diagonal" size={13} /></a>
+    </footer>
+  </article>
+</Site>
+
+<script>
+  const index = document.querySelector<HTMLDetailsElement>('.article-index details');
+  index?.addEventListener('click', (event) => {
+    if (event.target instanceof HTMLAnchorElement) index.open = false;
+  });
+</script>
+
+<style>
+  .article-heading :global(.article-art) { padding-inline-end: max(56px, 12%); }
+  .article-mark {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--area);
+    color: var(--accent);
+    font-size: 18px;
+  }
+</style>

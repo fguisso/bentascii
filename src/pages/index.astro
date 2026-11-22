@@ -1,0 +1,93 @@
+---
+import ArticleArt from '../components/ArticleArt.astro';
+import AsciiArt from '../components/AsciiArt.astro';
+import CornerCard from '../components/CornerCard.astro';
+import Icon from '../components/Icon.astro';
+import PostList from '../components/PostList.astro';
+import ProjectBoard from '../components/ProjectBoard.astro';
+import Site from '../layouts/Site.astro';
+import { site } from '../site.config';
+import { withBase } from '../utils/paths';
+import { getPosts, postHref, readingMinutes, shortDate } from '../utils/posts';
+
+const posts = await getPosts();
+const featured = posts[0];
+---
+
+<Site>
+  <div class="home">
+    <section class="lead" aria-labelledby="intro-title">
+      <div>
+        <h1 id="intro-title">{site.author}</h1>
+        {site.bio.map((paragraph) => <p>{paragraph}</p>)}
+        <div class="intro-links">
+          <a href={withBase('about/')}>About me <Icon name="diagonal" size={13} /></a>
+          <a class="intro-blog" href={withBase('blog/')}>Read the articles</a>
+        </div>
+      </div>
+      <AsciiArt />
+    </section>
+
+    <div class="bento">
+      <CornerCard href={withBase('blog/')} label="Browse all articles" aria-labelledby="latest-posts">
+        <h2 id="latest-posts">Latest posts</h2>
+        <PostList posts={posts.slice(0, 3)} compact />
+      </CornerCard>
+
+      {featured && (
+        <a class="featured-story" href={postHref(featured)}>
+          <ArticleArt title={featured.data.title} as="h2" topic={featured.data.tags[0]} />
+          <div class="featured-copy">
+            <p class="story-meta"><time datetime={featured.data.pubDate.toISOString()}>{shortDate(featured.data.pubDate)}</time> · {readingMinutes(featured.body)} min</p>
+            <p>{featured.data.description}</p>
+          </div>
+        </a>
+      )}
+
+      <section class="projects" aria-labelledby="projects-title">
+        <div class="section-heading">
+          <h2 id="projects-title">Projects</h2>
+          <a href={withBase('projects/')}>All projects <Icon name="diagonal" size={13} /></a>
+        </div>
+        <ProjectBoard preview />
+      </section>
+    </div>
+  </div>
+</Site>
+
+<style>
+  .home { padding-top: 35px; }
+  .lead { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: 20px; margin-bottom: 36px; }
+  .lead h1 { color: var(--accent); font-size: clamp(32px, 4.4vw, 56px); overflow-wrap: anywhere; }
+  .lead p { margin-top: 14px; max-width: 46ch; line-height: 1.55; }
+  .lead p + p { margin-top: 10px; }
+  .intro-links { display: flex; gap: 16px; flex-wrap: wrap; }
+  .intro-links a, .section-heading a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; font-size: 13px; }
+  .intro-links .intro-blog { display: none; color: var(--accent); }
+
+  .bento { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .bento > :global(.corner-card) h2 { margin-bottom: 12px; font-size: 18px; }
+  .featured-story {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    text-decoration: none;
+  }
+  .featured-story:hover { border-color: var(--accent); }
+  .featured-copy { padding: 14px 20px 20px; font-size: 14px; line-height: 21px; color: var(--body); }
+  .story-meta { color: var(--muted); font-size: var(--text-caption); margin-bottom: 7px; }
+  .projects { grid-column: 1 / -1; min-width: 0; }
+  .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .section-heading h2 { font-size: 18px; }
+  @media (max-width: 760px) {
+    .intro-links .intro-blog { display: inline-flex; }
+  }
+  @media (max-width: 620px) {
+    .home { padding-top: 28px; }
+    .lead, .bento { grid-template-columns: minmax(0, 1fr); }
+    .lead { gap: 8px; margin-bottom: 24px; }
+  }
+</style>

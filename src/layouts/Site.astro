@@ -1,0 +1,66 @@
+---
+import inter from '../assets/inter.woff2?url';
+import Icon from '../components/Icon.astro';
+import Header from '../components/Header.astro';
+import { site } from '../site.config';
+import { withBase } from '../utils/paths';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: 'website' | 'article';
+  noIndex?: boolean;
+}
+
+const { title, description = site.description, type = 'website', noIndex = false } = Astro.props;
+const pageTitle = title ? `${title} | ${site.title}` : `${site.title} | ${site.author}'s blog`;
+const canonical = Astro.site && !noIndex ? new URL(Astro.url.pathname, Astro.site) : undefined;
+const mark = [...site.mark].map((character) => `&#${character.codePointAt(0)};`).join('');
+const favicon = 'data:image/svg+xml,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#ffc39e"/><text x="24" y="33" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="28" fill="#251912">${mark}</text></svg>`
+);
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark light" />
+    {noIndex && <meta name="robots" content="noindex" />}
+    <title>{pageTitle}</title>
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+    <link rel="preload" href={inter} as="font" type="font/woff2" crossorigin />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href={withBase('rss.xml')} />
+    {Astro.site && <link rel="sitemap" href={withBase('sitemap-index.xml')} />}
+    {canonical && <link rel="canonical" href={canonical.href} />}
+    {canonical && <meta property="og:url" content={canonical.href} />}
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.title} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <script is:inline>
+      try {
+        const savedTheme = localStorage.getItem('bentascii-theme');
+        if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'sand') {
+          document.documentElement.dataset.theme = savedTheme;
+        }
+      } catch {
+        // The page stylesheet supplies the default theme.
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <Header />
+    <main class="shell" id="content" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="shell site-footer">
+      <a class="footer-brand" href={withBase()}>{site.title}</a>
+      <a href={withBase('rss.xml')} type="application/rss+xml"><Icon name="rss" /> RSS</a>
+    </footer>
+  </body>
+</html>

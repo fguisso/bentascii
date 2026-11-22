@@ -1,0 +1,104 @@
+---
+title: Writing with Markdown and MDX
+description: A working article with type samples, Markdown syntax, and an interactive Astro component.
+pubDate: 2026-11-22
+tags: [markdown, mdx, typography]
+---
+
+import TypographySamples from '../../components/TypographySamples.astro';
+import ReadingCalculator from '../../components/ReadingCalculator.astro';
+
+Write posts in `src/content/blog/`. Both `.md` and `.mdx` files use the same article layout. The examples below show the source and how it appears on the page.
+
+## Typography and headings
+
+Markdown describes the structure of the article. The stylesheet chooses the fonts. Here, Inter is the body text, Inter Article Title and italic Georgia share the title, and code uses the system's monospace font.
+
+<TypographySamples />
+
+The page title comes from frontmatter. Inside the article, use `##` for a section and an entry in the table of contents. Use `###` and `####` for headings within that section.
+
+### A subsection heading
+
+#### A heading within a subsection
+
+```markdown
+## A section heading
+### A subsection heading
+#### A heading within a subsection
+```
+
+## Emphasis, links, and quotes
+
+Use **bold for emphasis**, *italics for a title or a word in context*, ~~strikethrough for an edit~~, and `inline code` for filenames and commands. This [link jumps to the MDX example](#using-mdx).
+
+> Put a quotation or a note you want to set apart on its own line.
+
+```markdown
+**Bold**, *italics*, ~~strikethrough~~, and `inline code`.
+[Link text](#using-mdx)
+
+> A blockquote starts with a greater-than sign.
+```
+
+## Lists and tables
+
+- A bullet list can group related items.
+  - Indent a line to nest an item.
+
+1. Start a numbered list when order matters.
+2. Put the next step on its own line.
+
+- [x] Add a title and publication date.
+- [ ] Read the preview before publishing.
+
+Tables and task lists are GitHub Flavored Markdown extensions supported by this template. Add colons to the separator row to align a column.
+
+| Format | Use it for | File extension |
+| :--- | :--- | ---: |
+| Markdown | Articles, links, and code samples | `.md` |
+| MDX | Articles with reusable components | `.mdx` |
+
+```markdown
+- [x] Add a title and publication date.
+- [ ] Read the preview before publishing.
+
+| Format | File extension |
+| :--- | ---: |
+| Markdown | `.md` |
+| MDX | `.mdx` |
+```
+
+## Code and section breaks
+
+Put a language after the opening fence for syntax highlighting. For commands, use `sh`. The example below uses `js`.
+
+```js
+const words = 900;
+const wordsPerMinute = 225;
+const minutes = Math.ceil(words / wordsPerMinute);
+```
+
+Three hyphens on a separate line, with a blank line before and after, draw a horizontal rule.
+
+---
+
+## Using MDX
+
+MDX adds JSX to Markdown, so you can import a component and place it between paragraphs. Save the post with the `.mdx` extension and keep the same frontmatter fields as a Markdown post.
+
+Put imports after frontmatter and before the first paragraph. This file imports an Astro component using its path relative to the post, then renders it where the component tag appears.
+
+```mdx
+import ReadingCalculator from '../../components/ReadingCalculator.astro';
+
+<ReadingCalculator />
+```
+
+Try replacing 900 with 1,200 to see the estimate update.
+
+<ReadingCalculator />
+
+MDX also lets you render small JavaScript expressions inside braces. For instance, `{900 / 225}` renders as {900 / 225}.
+
+For more examples, see the [Astro MDX integration guide](https://docs.astro.build/en/guides/integrations-guide/mdx/) and the [MDX syntax guide](https://mdxjs.com/docs/what-is-mdx/).

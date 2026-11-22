@@ -1,0 +1,13 @@
+---
+import Site from '../layouts/Site.astro';
+import { withBase } from '../utils/paths';
+---
+
+<Site title="Page not found" description="This page could not be found." noIndex>
+  <section class="narrow">
+    <header class="page-heading">
+      <h1>Page not found</h1>
+      <p>This address doesn't point to a page. Return to <a href={withBase()}>the homepage</a> or browse <a href={withBase('blog/')}>the article archive</a>.</p>
+    </header>
+  </section>
+</Site>

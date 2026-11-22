@@ -1,0 +1,76 @@
+---
+import Chip from './Chip.astro';
+import { splitArticleTitle } from '../lib/article-title';
+import { asciiBackgroundScene } from '../lib/ascii-background';
+
+interface Props { title: string; as?: 'h1' | 'h2'; topic?: string }
+const { title, as: Heading = 'h1', topic } = Astro.props;
+const { tone, text } = asciiBackgroundScene(title);
+const { prefix, suffix } = splitArticleTitle(title);
+---
+
+<div class:list={['article-art', { 'featured-art': Heading === 'h2' }]} data-tone={tone}>
+  <div class="art-text" aria-hidden="true"><pre set:text={text} /></div>
+  <Heading>{prefix}{suffix && <>{' '}<em>{suffix}</em></>}</Heading>
+  {topic && <div class="featured-topic"><Chip>{topic}</Chip></div>}
+</div>
+
+<style>
+  .article-art {
+    --art-surface: var(--article-panel);
+    --art-ink: var(--article-ink);
+    --art-accent: var(--article-accent);
+    position: relative;
+    isolation: isolate;
+    padding: clamp(18px, 3vw, 28px);
+    background: var(--art-surface);
+    color: var(--art-ink);
+    overflow: clip;
+  }
+  .article-art[data-tone='secondary'] {
+    --art-surface: var(--article-panel-alt);
+    --art-ink: var(--article-ink-alt);
+    --art-accent: var(--article-accent-alt);
+  }
+  .article-art h1, .article-art h2 { color: inherit; overflow-wrap: anywhere; text-wrap: wrap; }
+  .article-art h1 {
+    font: 520 clamp(32px, 5vw, 48px)/1.05 'Inter Article Title', var(--sans);
+    letter-spacing: -.04em;
+  }
+  h1 em { display: block; }
+  em { font-family: var(--serif); font-weight: 400; color: var(--art-accent); }
+  .art-text {
+    position: absolute;
+    z-index: -1;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: min(70%, 24rem);
+    overflow: clip;
+    mask-image: linear-gradient(to right, transparent, #000 65%);
+    pointer-events: none;
+    user-select: none;
+  }
+  pre {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: 0;
+    transform: translateY(-50%);
+    margin: 0;
+    color: var(--art-accent);
+    opacity: .46;
+    font: .625rem/.625rem var(--mono);
+    letter-spacing: 0;
+  }
+  .featured-art { display: flex; flex-direction: column; flex: 1; min-height: 144px; padding: 14px 20px 12px; }
+  .featured-art h2 { margin: auto 0; font: 400 clamp(24px, 3vw, 33px)/1.08 var(--serif); letter-spacing: -.038em; }
+  .featured-topic { padding-top: 10px; --ink: var(--art-ink); --line: color-mix(in srgb, var(--art-ink) 38%, var(--art-surface)); }
+
+  @media (max-width: 760px) {
+    pre { opacity: .27; }
+  }
+  @media print, (forced-colors: active) {
+    .art-text { display: none; }
+    .article-art { background: transparent; color: var(--ink); }
+    em { color: inherit; }
+  }
+</style>

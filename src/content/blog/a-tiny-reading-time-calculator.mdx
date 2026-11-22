@@ -1,0 +1,24 @@
+---
+title: A tiny reading-time calculator
+description: An MDX example with two inputs and a small Astro component.
+pubDate: 2026-04-28
+tags: [web, experiments]
+---
+
+import ReadingCalculator from '../../components/ReadingCalculator.astro';
+
+Each article shows a reading estimate based on 200 words per minute. Use this calculator to see how your own pace changes the estimate.
+
+## Try the calculator
+
+<ReadingCalculator />
+
+## Calculate the estimate
+
+Divide the word count by the reading pace and round up. At 225 words per minute, a 900-word draft takes about four minutes.
+
+```js
+const minutes = Math.ceil(wordCount / wordsPerMinute);
+```
+
+Keep the inputs in an Astro component so the post can explain the calculation in prose. The surrounding article is ordinary Markdown.

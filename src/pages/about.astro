@@ -1,0 +1,20 @@
+---
+import Site from '../layouts/Site.astro';
+import { site } from '../site.config';
+import { withBase } from '../utils/paths';
+import '../styles/reading.css';
+---
+
+<Site title="About" description={`About ${site.author} and this blog.`}>
+  <section class="narrow">
+    <header class="page-heading">
+      <h1>About me</h1>
+      <p>I'm {site.author}. I make small tools for the web and write about the ones I keep using.</p>
+    </header>
+    <div class="prose">
+      <h2>This blog</h2>
+      <p>I use this space to keep track of ideas I want to revisit. Some posts document a project. Others record a detail that took me a while to learn.</p>
+      <p>Browse the <a href={withBase('blog/')}>article archive</a> or follow new posts through the <a href={withBase('rss.xml')}>RSS feed</a>.</p>
+    </div>
+  </section>
+</Site>

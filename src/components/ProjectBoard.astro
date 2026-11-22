@@ -1,0 +1,56 @@
+---
+import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+import { withBase } from '../utils/paths';
+
+interface Props { preview?: boolean }
+const { preview = false } = Astro.props;
+const Heading = preview ? 'h3' : 'h2';
+const projects = [
+  {
+    title: 'Reading-time calculator',
+    description: 'Estimate how long an article takes to read at your own pace.',
+    href: 'blog/a-tiny-reading-time-calculator/',
+    code: 'words = 900\npace  = 225\n  -> 4 min',
+  },
+  {
+    title: 'Field notebook',
+    description: 'A plain-text notebook organized around questions.',
+    href: 'blog/a-notebook-that-stays-useful/',
+    code: 'notes/\n  print-layout.md\n  keyboard-shortcuts.md',
+  },
+];
+---
+
+<div class="project-board">
+  {projects.map(({ title, description, href, code }, index) => (
+    <a class:list={['project-tile', { 'project-tile-alt': index % 2 === 1 }]} href={withBase(href)}>
+      <div class="project-top"><Chip>Project</Chip><Icon name="diagonal" /></div>
+      <pre aria-hidden="true" set:text={code} />
+      <Heading>{title}</Heading>
+      <p>{description}</p>
+    </a>
+  ))}
+</div>
+
+<style>
+  .project-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .project-tile {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 8px;
+    padding: clamp(14px, 2vw, 22px);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .project-tile:hover { border-color: var(--accent); }
+  .project-tile-alt { background: var(--article-panel-alt); }
+  .project-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); }
+  pre { color: var(--secondary); font: 13px/1.55 var(--mono); margin: 8px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  h2, h3 { font: 500 21px/1.3 var(--sans); margin-top: auto; }
+  p { color: var(--body); font-size: 14px; line-height: 1.55; }
+  @media (max-width: 500px) { .project-board { grid-template-columns: minmax(0, 1fr); } }
+</style>

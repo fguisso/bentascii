@@ -1,0 +1,47 @@
+<section class="type-samples" aria-label="Font samples">
+  <div>
+    <p class="font-label">Inter <span>body text</span></p>
+    <p class="body-sample">The quick brown fox jumps over the lazy dog.</p>
+  </div>
+  <div>
+    <p class="font-label">Inter Article Title <span>display weight</span></p>
+    <p class="title-sample">Field notes</p>
+  </div>
+  <div>
+    <p class="font-label">Georgia <span>editorial italic</span></p>
+    <p class="serif-sample">Field notes</p>
+  </div>
+  <div>
+    <p class="font-label">System monospace <span>code</span></p>
+    <p class="mono-sample">const status = 'published';</p>
+  </div>
+</section>
+
+<style>
+  .type-samples {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    background: var(--panel);
+  }
+  .type-samples > div { padding: 16px 20px; min-width: 0; }
+  .type-samples > div:nth-child(even) { border-inline-start: 1px solid var(--line); }
+  .type-samples > div:nth-child(n+3) { border-block-start: 1px solid var(--line); }
+  .font-label {
+    margin-bottom: 10px;
+    color: var(--muted);
+    font: 400 var(--text-caption)/1.5 var(--sans);
+  }
+  .font-label span { display: block; }
+  .body-sample { color: var(--ink); font: 400 17px/26px var(--sans); }
+  .title-sample { color: var(--ink); font: 520 2rem/1.1 'Inter Article Title', var(--sans); letter-spacing: -.04em; }
+  .serif-sample { color: var(--accent); font: italic 2rem/1.1 var(--serif); }
+  .mono-sample { color: var(--secondary); font: .85rem/1.6 var(--mono); }
+
+  @media (max-width: 520px) {
+    .type-samples { grid-template-columns: minmax(0, 1fr); }
+    .type-samples > div:nth-child(even) { border-inline-start: 0; }
+    .type-samples > div + div { border-block-start: 1px solid var(--line); }
+  }
+</style>

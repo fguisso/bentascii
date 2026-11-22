@@ -1,0 +1,26 @@
+<button class="theme-toggle" type="button" hidden>theme: dark</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  const root = document.documentElement;
+  const themes = ['dark', 'light', 'sand'];
+
+  if (button) {
+    const control = button;
+    const updateLabel = () => { control.textContent = 'theme: ' + (root.dataset.theme ?? 'dark'); };
+
+    updateLabel();
+    control.hidden = false;
+    control.addEventListener('click', () => {
+      const index = themes.indexOf(root.dataset.theme ?? 'dark');
+      const theme = themes[(index + 1) % themes.length];
+      root.dataset.theme = theme;
+      updateLabel();
+      try {
+        localStorage.setItem('bentascii-theme', theme);
+      } catch {
+        // The current page can still change themes when storage is unavailable.
+      }
+    });
+  }
+</script>

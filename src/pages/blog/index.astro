@@ -1,0 +1,25 @@
+---
+import PostList from '../../components/PostList.astro';
+import Site from '../../layouts/Site.astro';
+import { getPosts } from '../../utils/posts';
+
+const title = 'Articles';
+const description = 'Essays, notes, and interactive explanations.';
+const posts = await getPosts();
+---
+
+<Site {title} {description}>
+  <section class="archive">
+    <header class="page-heading">
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </header>
+    <PostList {posts} search />
+  </section>
+</Site>
+
+<style>
+  .archive { width: min(100%, 800px); margin-inline: auto; }
+  .page-heading { margin-bottom: 28px; }
+  .page-heading p { margin-top: 12px; }
+</style>

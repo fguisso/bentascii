@@ -1,0 +1,44 @@
+---
+const columns = 64;
+const rows = 22;
+const glyphs = '.:+*#%@';
+
+const art = Array.from({ length: rows }, (_, row) =>
+  Array.from({ length: columns }, (_, column) => {
+    const x = (column + 0.5) / columns * 2 - 1;
+    const y = (row + 0.5) / rows * 2 - 1;
+    const center = Math.sin(x * 3.5) * 0.37 - x * 0.12;
+    const halfWidth = Math.sqrt(Math.max(0, 1 - (x / 0.94) ** 2)) * 0.53;
+    const distance = Math.abs(y - center);
+
+    if (halfWidth && distance <= halfWidth) {
+      const fold = Math.abs(Math.sin((y - center) * 22 + x * 6));
+      const light = fold * 0.7 + (1 - distance / halfWidth) * 0.28;
+      return { glyph: glyphs[Math.floor(light * glyphs.length)], edge: y < center && halfWidth - distance < 0.09 };
+    }
+
+    return { glyph: ' ', edge: false };
+  })
+);
+---
+
+<div class="ascii-art" aria-hidden="true">
+  <pre>{art.map((row) => <span class="art-row">{row.map(({ glyph, edge }) => edge ? <span class="edge">{glyph}</span> : glyph)}</span>)}</pre>
+</div>
+
+<style>
+  .ascii-art {
+    display: grid;
+    place-items: center;
+    justify-self: center;
+    width: min(100%, 430px);
+    aspect-ratio: 1;
+    container-type: inline-size;
+    overflow: hidden;
+  }
+  pre { margin: 0; font: 400 2.5cqw/1.06 var(--mono); color: var(--secondary); user-select: none; }
+  .art-row { display: block; white-space: pre; }
+  .edge { color: var(--accent); }
+  @media (max-width: 620px) { .ascii-art { width: min(100%, 205px); } }
+  @media (forced-colors: active) { .ascii-art { display: none; } }
+</style>

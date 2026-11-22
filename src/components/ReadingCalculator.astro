@@ -1,0 +1,50 @@
+<reading-calculator>
+  <form>
+    <div class="calculator-fields">
+      <label>
+        Words
+        <input name="words" type="number" min="1" max="100000" step="1" value="900" required />
+      </label>
+      <label>
+        Words per minute
+        <input name="pace" type="number" min="1" max="1200" step="1" value="225" required />
+      </label>
+    </div>
+    <p>Estimated reading time <output aria-live="polite">4 min</output></p>
+    <noscript><p>Divide the number of words by your reading pace and round up.</p></noscript>
+  </form>
+</reading-calculator>
+
+<script>
+  class ReadingCalculator extends HTMLElement {
+    connectedCallback() {
+      const form = this.querySelector('form');
+      const output = this.querySelector('output');
+      const words = this.querySelector<HTMLInputElement>('[name="words"]');
+      const pace = this.querySelector<HTMLInputElement>('[name="pace"]');
+
+      if (!form || !output || !words || !pace) return;
+
+      const update = () => {
+        output.value = words.validity.valid && pace.validity.valid
+          ? `${Math.ceil(words.valueAsNumber / pace.valueAsNumber)} min`
+          : 'Enter values within the allowed ranges';
+      };
+
+      form.addEventListener('input', update);
+      form.addEventListener('submit', (event) => event.preventDefault());
+      update();
+    }
+  }
+
+  customElements.define('reading-calculator', ReadingCalculator);
+</script>
+
+<style>
+  reading-calculator { display: block; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .calculator-fields { display: flex; flex-wrap: wrap; gap: 14px; }
+  label { display: grid; flex: 1 1 150px; gap: 5px; min-width: 0; font-size: 14px; }
+  input { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; background: var(--page); color: var(--ink); font: inherit; }
+  p { margin-top: 14px; }
+  output { display: inline-block; margin-left: 8px; color: var(--accent); font-weight: 600; }
+</style>

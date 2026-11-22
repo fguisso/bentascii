@@ -1,0 +1,27 @@
+---
+import Site from '../../layouts/Site.astro';
+import { getPosts, tagHref } from '../../utils/posts';
+
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap(({ data }) => data.tags))].sort();
+---
+
+<Site title="Topics" description="Browse articles by topic.">
+  <section class="narrow">
+    <header class="page-heading">
+      <h1>Topics</h1>
+      <p>Find articles by tag.</p>
+    </header>
+    {tags.length > 0 ? (
+      <ul class="topics">
+        {tags.map((tag) => <li><a href={tagHref(tag)}>#{tag}</a></li>)}
+      </ul>
+    ) : <p>No topics have been added yet.</p>}
+  </section>
+</Site>
+
+<style>
+  .topics { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; margin: 0; padding: 0; }
+  .topics a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; font: 400 14px/1.5 var(--mono); }
+  .topics a:hover { border-color: var(--accent); }
+</style>
